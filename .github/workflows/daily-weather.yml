@@ -2,8 +2,8 @@ name: Daily Weather Report
 
 on:
   schedule:
-    - cron: '0 7 * * *'  # Каждый день в 07:00 UTC
-  workflow_dispatch:  # Позволяет запускать вручную
+    - cron: '0 7 * * *'
+  workflow_dispatch:
 
 jobs:
   send-weather:
@@ -21,6 +21,21 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
+
+      - name: Debug environment
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          CITY_ID: ${{ secrets.CITY_ID }}
+        run: |
+          echo "DEBUG: Checking environment..."
+          echo "API Key present: $([ -n "$OPENWEATHER_API_KEY" ] && echo "YES" || echo "NO")"
+          echo "City ID: $CITY_ID"
+          
+          # Test API directly
+          if [ -n "$OPENWEATHER_API_KEY" ]; then
+            echo "Testing API..."
+            curl -s "https://api.openweathermap.org/data/2.5/weather?id=$CITY_ID&appid=$OPENWEATHER_API_KEY&units=metric" | head -50
+          fi
 
       - name: Run weather script
         env:

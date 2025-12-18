@@ -26,10 +26,8 @@ def save_json(path, data):
 
 
 def get_weather():
-    url = (
-        f"https://api.openweathermap.org/data/2.5/weather?"  # ← ПРАВИЛЬНО: weather
-        f"id={CITY_ID}&appid={OPENWEATHER_API_KEY}&units=metric&lang=ru"
-    )
+    # ИСПРАВЛЕННЫЙ URL - weather вместо weather2!
+    url = f"https://api.openweathermap.org/data/2.5/weather?id={CITY_ID}&appid={OPENWEATHER_API_KEY}&units=metric&lang=ru"
     resp = requests.get(url, timeout=15)
     resp.raise_for_status()
     return resp.json()
@@ -40,7 +38,6 @@ def pick_temperature_category(config, temp):
     for name, cfg in categories.items():
         if cfg["min"] <= temp <= cfg["max"]:
             return name, cfg
-    # если не нашли – просто вернём "cool"
     return "cool", categories["cool"]
 
 
